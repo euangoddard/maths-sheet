@@ -24,10 +24,11 @@
 
   fieldset {
     border: none;
+    margin-bottom: 1rem;
   }
 
   legend {
-    font-weight: 500;
+    font-weight: 200;
     font-size: 1.5rem;
   }
 
