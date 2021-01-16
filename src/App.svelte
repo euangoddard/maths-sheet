@@ -1,4 +1,3 @@
-
 <script lang="ts">
   import type { Problems } from "./models";
   import { createProblem, readProblem } from "./api";
@@ -6,7 +5,12 @@
   import { parseProblem } from "./parse";
   import Solve from "./Solve.svelte";
 
-  let isSolving = false;
+  enum State {
+    Loading,
+    Defining,
+    Solving,
+  }
+  let state = State.Loading;
 
   let problems: Problems;
 
@@ -14,19 +18,20 @@
     const { problemDef } = event.detail;
     problems = event.detail["problems"];
     const response = await createProblem({ problem: problemDef });
-    window.history.pushState(problemDef, "Solve problem", `/p/${response.id}`);
+    window.history.pushState(problemDef, undefined, `/p/${response.id}`);
     updateRouteState();
   }
 
   async function updateRouteState() {
     const match = window.location.pathname.match(/^\/p\/(\w+)$/);
     if (!problems && match) {
+      state = State.Loading;
       const apiProblem = await readProblem(match[1]);
       const problemDef = apiProblem.problem;
       problems = parseProblem(problemDef);
-      isSolving = true;
+      state = State.Solving;
     } else {
-      isSolving = !!match;
+      state = match ? State.Solving : State.Defining;
     }
   }
 
@@ -35,9 +40,11 @@
 
 <svelte:window on:popstate="{updateRouteState}" />
 <main>
-  {#if isSolving}
+  {#if state === State.Solving}
     <Solve problems="{problems}" />
-  {:else}
+  {:else if state === State.Defining}
     <Define on:save="{saveProblem}" />
+  {:else if state === State.Loading}
+    Loading&hellip;
   {/if}
 </main>
