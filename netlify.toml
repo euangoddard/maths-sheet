@@ -1,0 +1,17 @@
+[build]
+command = "npm run build"
+functions = "functions"
+publish = "public"
+
+[dev]
+command = "npm run dev"
+targetPort = 5000
+port = 5001
+publish = "public"
+autoLaunch = true
+framework = "#custom"
+
+[[redirects]]
+from = "/p/*"
+to = "/index.html"
+status = 200
