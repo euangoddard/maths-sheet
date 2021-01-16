@@ -4,18 +4,34 @@ import { ProblemTokenType } from "./models";
 let _nextId = 0;
 const nextId = () => ++_nextId;
 
-export function parseProblem(problem: string): Problems {
-  return problem.split("\n").map(parseProblemLine);
+export function parseProblemDef(problemsDef: string): Problems {
+  return problemsDef.split("\n\n").map(parseProblemLine);
 }
 
-function parseProblemLine(problemLine: string, index: number): Problem {
-  const [questionNumber, ...rest] = problemLine.trim().split(":");
+function parseProblemLine(problemDef: string, index: number): Problem {
+  const [questionNumber, ...rest] = problemDef.trim().split(":");
   if (!rest.length) {
-    throw new ParseError(`Problem on line ${index + 1} does not contain :`);
+    throw new ParseError(`Problem ${index + 1} does not contain :`);
   }
 
-  const tokens: ProblemToken[] = [];
   const problemRaw = rest.join(":").trim();
+  const problemLines = problemRaw.split("\n");
+  const tokens: ProblemToken[] = [];
+  for (let index = 0; index < problemLines.length; index += 1) {
+    const lineTokens = tokenizeProblem(problemLines[index]);
+    tokens.push(...lineTokens);
+    if (index < problemLines.length - 1) {
+      tokens.push({ type: ProblemTokenType.LineBreak, id: -1, value: "\n" });
+    }
+  }
+  return {
+    number: questionNumber.trim(),
+    tokens,
+  };
+}
+
+function tokenizeProblem(problemRaw: string): readonly ProblemToken[] {
+  const tokens: ProblemToken[] = [];
   if (problemRaw.slice(0, 1) === "~") {
     tokens.push({
       type: ProblemTokenType.Field,
@@ -42,11 +58,7 @@ function parseProblemLine(problemLine: string, index: number): Problem {
       }
     }
   });
-
-  return {
-    number: questionNumber.trim(),
-    tokens,
-  };
+  return tokens;
 }
 
 export class ParseError extends Error {}

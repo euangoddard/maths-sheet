@@ -1,17 +1,18 @@
 <script lang="ts">
-  import { ParseError, parseProblem } from "./parse";
+  import { ParseError, parseProblemDef } from "./parse";
   import type { Problems } from "./models";
   import { ProblemTokenType } from "./models";
   import { createEventDispatcher } from "svelte";
 
-  let problemDef: string = "1: 10 x ~ = 100\n2: 7 lots of ~ = 56";
+  let problemDef: string =
+    "1: 10 x ~ = 100\n\n2: 7 lots of ~ = 56\n~ multiplied by 8 = 56";
   let isValid = true;
   let errorMessage: string | null = null;
   let problems: Problems;
 
   $: {
     try {
-      problems = parseProblem(problemDef);
+      problems = parseProblemDef(problemDef);
       isValid = true;
       errorMessage = null;
     } catch (exc) {
@@ -45,11 +46,13 @@
     <form>
       {#each problems as problem, index}
         <fieldset>
-          <legend>{problem.number}</legend>
+          <legend>{problem.number}.</legend>
           <div>
             {#each problem.tokens as token}
               {#if token.type === ProblemTokenType.Field}
                 <input type="text" readonly />
+              {:else if token.type === ProblemTokenType.LineBreak}
+                <br />
               {:else}
                 <span>{token.value}</span>
               {/if}

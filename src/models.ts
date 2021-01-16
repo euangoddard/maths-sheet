@@ -1,6 +1,7 @@
 export enum ProblemTokenType {
   Field,
   Text,
+  LineBreak,
 }
 
 export interface ProblemToken {

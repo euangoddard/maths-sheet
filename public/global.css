@@ -66,16 +66,18 @@ input:disabled {
 fieldset {
   border: none;
   margin-bottom: 1rem;
+  padding-left: 1rem;
 }
 
 legend {
+  margin-left: -1rem;
   font-weight: 200;
   font-size: 1.5rem;
 }
 
 fieldset input {
   width: 5rem;
-  margin: 0 0.25rem;
+  margin: 0 0.25rem 0.5rem;
 }
 
 fieldset input:first-child {

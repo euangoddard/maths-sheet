@@ -2,7 +2,7 @@
   import type { Problems } from "./models";
   import { createProblem, readProblem } from "./api";
   import Define from "./Define.svelte";
-  import { parseProblem } from "./parse";
+  import { parseProblemDef } from "./parse";
   import Solve from "./Solve.svelte";
 
   enum State {
@@ -28,7 +28,7 @@
       state = State.Loading;
       const apiProblem = await readProblem(match[1]);
       const problemDef = apiProblem.problem;
-      problems = parseProblem(problemDef);
+      problems = parseProblemDef(problemDef);
       state = State.Solving;
     } else {
       state = match ? State.Solving : State.Defining;

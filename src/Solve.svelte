@@ -21,11 +21,13 @@
   <form>
     {#each problems as problem, index}
       <fieldset>
-        <legend>{problem.number}</legend>
+        <legend>{problem.number}.</legend>
         <div>
           {#each problem.tokens as token}
             {#if token.type === ProblemTokenType.Field}
               <input type="text" on:input="{storeAnswer(token)}" />
+            {:else if token.type === ProblemTokenType.LineBreak}
+              <br />
             {:else}
               <span>{token.value}</span>
             {/if}
